@@ -3,7 +3,6 @@ using Xamarin.Forms;
 using ZXing.Net.Mobile.Forms;
 using Xamarin.Forms.Platform.iOS;
 using System.ComponentModel;
-using System.Reflection;
 using Foundation;
 using ZXing.Net.Mobile.Forms.iOS;
 using UIKit;
@@ -29,7 +28,7 @@ namespace ZXing.Net.Mobile.Forms.iOS
 
 			formsView = Element;
 
-			if (zxingView == null)
+			if (formsView != null && zxingView == null)
 			{
 
 				// Process requests for autofocus

@@ -41,7 +41,7 @@ namespace ZXing.Net.Mobile.Forms.Android
 
 			formsView = Element;
 
-			if (zxingSurface == null)
+			if (formsView != null && zxingSurface == null)
 			{
 
 				// Process requests for autofocus

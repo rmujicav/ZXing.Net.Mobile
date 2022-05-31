@@ -98,7 +98,7 @@ namespace ZXing.Mobile
 			// can cope with more data or volume
 			session = new AVCaptureSession()
 			{
-				SessionPreset = AVCaptureSession.Preset640x480
+				SessionPreset = PresetConverter.ToAVCaptureSessionPreset(ScanningOptions.CameraResolutionPreset)
 			};
 
 			// create a device input and attach it to the session
@@ -285,13 +285,13 @@ namespace ZXing.Mobile
 						captureDevice.WhiteBalanceMode = AVCaptureWhiteBalanceMode.AutoWhiteBalance;
 
 					if (UIDevice.CurrentDevice.CheckSystemVersion(7, 0) && captureDevice.AutoFocusRangeRestrictionSupported)
-						captureDevice.AutoFocusRangeRestriction = AVCaptureAutoFocusRangeRestriction.Near;
+						captureDevice.AutoFocusRangeRestriction = AVCaptureAutoFocusRangeRestriction.None;
 
 					if (captureDevice.FocusPointOfInterestSupported)
-						captureDevice.FocusPointOfInterest = new CGPoint(0.5f, 0.5f);
+						captureDevice.FocusPointOfInterest = new CGPoint(ScanningOptions.FocusPointOfInterest.X, ScanningOptions.FocusPointOfInterest.Y);
 
 					if (captureDevice.ExposurePointOfInterestSupported)
-						captureDevice.ExposurePointOfInterest = new CGPoint(0.5f, 0.5f);
+						captureDevice.ExposurePointOfInterest = new CGPoint(ScanningOptions.FocusPointOfInterest.X, ScanningOptions.FocusPointOfInterest.Y);
 
 					captureDevice.UnlockForConfiguration();
 				}
@@ -342,7 +342,7 @@ namespace ZXing.Mobile
 			if (AVMediaType.Video == null)
 				return;
 
-			var device = AVCaptureDevice.DefaultDeviceWithMediaType(AVMediaType.Video);
+			var device = AVCaptureDevice.GetDefaultDevice(AVMediaTypes.Video);
 
 			if (device == null)
 				return;
@@ -439,7 +439,7 @@ namespace ZXing.Mobile
 		{
 			try
 			{
-				var device = AVCaptureDevice.DefaultDeviceWithMediaType(AVMediaType.Video);
+				var device = AVCaptureDevice.GetDefaultDevice(AVMediaTypes.Video);
 				if (device.HasFlash || device.HasTorch)
 				{
 					device.LockForConfiguration(out var err);
@@ -499,7 +499,7 @@ namespace ZXing.Mobile
 				if (hasTorch.HasValue)
 					return hasTorch.Value;
 
-				var device = AVCaptureDevice.DefaultDeviceWithMediaType(AVMediaType.Video);
+				var device = AVCaptureDevice.GetDefaultDevice(AVMediaTypes.Video);
 				hasTorch = device.HasFlash || device.HasTorch;
 				return hasTorch.Value;
 			}

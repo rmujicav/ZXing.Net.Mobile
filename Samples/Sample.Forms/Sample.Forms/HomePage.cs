@@ -67,7 +67,7 @@ namespace Sample.Forms
 				};
 				customOverlay.Children.Add(torch);
 
-				scanPage = new ZXingScannerPage(new ZXing.Mobile.MobileBarcodeScanningOptions { AutoRotate = true }, customOverlay: customOverlay);
+				scanPage = new ZXingScannerPage(new ZXing.Mobile.MobileBarcodeScanningOptions { AutoRotate = true, CameraResolutionPreset = ZXing.Mobile.CameraResolutionPreset.Preset1920x1080 }, customOverlay: customOverlay);
 				scanPage.OnScanResult += (result) =>
 				{
 					scanPage.IsScanning = false;

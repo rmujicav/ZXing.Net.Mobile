@@ -1,10 +1,10 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras/3.0.23">
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.0;Xamarin.iOS10;Xamarin.Mac20;MonoAndroid10.0;tizen40</TargetFrameworks>
-		<TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">$(TargetFrameworks);uap10.0.16299;</TargetFrameworks>
+		<TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">$(TargetFrameworks);</TargetFrameworks>
 		<AssemblyName>ZXing.Net.Mobile.Forms</AssemblyName>
 		<RootNamespace>ZXing.Net.Mobile.Forms</RootNamespace>
-		<PackageId>ZXing.Net.Mobile.Forms</PackageId>
+		<PackageId>g0dpain.ZXing.Net.Mobile.Forms</PackageId>
 		<PackageIcon>icon.png</PackageIcon>
 		<Summary>ZXing Barcode Scanning for your Xamarin.iOS, Xamarin.Android and Windows Universal apps!</Summary>
 		<PackageTags>barcode, zxing, zxing.net, qr, scan, scanning, scanner</PackageTags>
@@ -15,9 +15,9 @@
 			See https://github.com/Redth/ZXing.Net.Mobile/releases for release notes.
 		</Description>
 		<Product>$(AssemblyName) ($(TargetFramework))</Product>
-		<AssemblyVersion>3.0.0.0</AssemblyVersion>
+		<AssemblyVersion>3.1.0.0</AssemblyVersion>
 		<AssemblyFileVersion>3.0.0.0</AssemblyFileVersion>
-		<Version>3.0.0</Version>
+		<Version>3.1.2-alpha</Version>
 		<PackageVersion>$(Version)$(VersionSuffix)</PackageVersion>
 		<Authors>Redth</Authors>
 		<Owners>Redth</Owners>
@@ -33,6 +33,7 @@
 		<DebugType>portable</DebugType>
 		<Configurations>Debug;Release</Configurations>
 		<IncludeProjectPriFile>false</IncludeProjectPriFile>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)'=='Debug' ">
 		<DebugSymbols>true</DebugSymbols>
@@ -89,7 +90,7 @@
 	<ItemGroup>
 		<PackageReference Include="Xamarin.Essentials" Version="1.6.0" />
 		<PackageReference Include="Xamarin.Forms" Version="5.0.0.1874" />
-		<PackageReference Include="ZXing.Net" Version="0.16.6" />
+		<PackageReference Include="ZXing.Net" Version="0.16.8" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\ZXing.Net.Mobile\ZXing.Net.Mobile.csproj" />
