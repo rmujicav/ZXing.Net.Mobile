@@ -9,10 +9,16 @@ namespace ZXing.Mobile
         {
             switch (preset)
             {
+                case CameraResolutionPreset.PresetLow;
+                    return AVCaptureSession.PresetLow;
+                case CameraResolutionPreset.PresetPhoto;
+                    return AVCaptureSession.PresetPhoto;
                 case CameraResolutionPreset.Preset352x288:
                     return AVCaptureSession.Preset352x288;
                 case CameraResolutionPreset.PresetMedium:
                     return AVCaptureSession.PresetMedium;
+                case CameraResolutionPreset.PresetHigh;
+                    return AVCaptureSession.PresetHigh;
                 case CameraResolutionPreset.Preset640x480:
                     return AVCaptureSession.Preset640x480;
                 case CameraResolutionPreset.Preset1280x720:

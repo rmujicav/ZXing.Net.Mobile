@@ -53,9 +53,14 @@ namespace ZXing.Mobile
         public int DelayBetweenAnalyzingFrames { get; set; }
         public int InitialDelayBeforeAnalyzingFrames { get; set; }
 
-        // only for iOS available
+        /// <summary>
+        /// Only for iOS/iPadOS devices.
+        /// Sets the camera preset resolution. The higher the value the longer it needs to analyze the barcode
+        /// </summary>
         public CameraResolutionPreset CameraResolutionPreset { get; set; } = CameraResolutionPreset.Preset640x480;
-        // only for iOS available
+        /// <summary>
+        /// Only for iOS
+        /// </summary>
         public FocusPointOfInterest FocusPointOfInterest { get; set; } = new FocusPointOfInterest();
 
         public static MobileBarcodeScanningOptions Default
