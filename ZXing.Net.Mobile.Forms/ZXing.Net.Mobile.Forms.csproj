@@ -1,7 +1,7 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras/3.0.23">
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.0;Xamarin.iOS10;Xamarin.Mac20;MonoAndroid10.0;tizen40</TargetFrameworks>
-		<TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">$(TargetFrameworks);</TargetFrameworks>
+		<TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">$(TargetFrameworks);uap10.0.16299;</TargetFrameworks>
 		<AssemblyName>ZXing.Net.Mobile.Forms</AssemblyName>
 		<RootNamespace>ZXing.Net.Mobile.Forms</RootNamespace>
 		<PackageId>g0dpain.ZXing.Net.Mobile.Forms</PackageId>
