@@ -27,6 +27,8 @@ namespace ZXing.Mobile
 
         public IEnumerable<BarcodeFormat> PossibleFormats { get; set; }
 
+        public bool? TryUseBuiltInUltraWideCamera { get; set; }
+
         public bool? TryHarder { get; set; }
 
         public bool? PureBarcode { get; set; }

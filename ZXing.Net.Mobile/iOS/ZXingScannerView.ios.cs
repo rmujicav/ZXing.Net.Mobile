@@ -119,18 +119,18 @@ namespace ZXing.Mobile
 			};
 
 			// create a device input and attach it to the session
-			var devices = AVCaptureDevice.DevicesWithMediaType(AVMediaType.Video);
-			foreach (var device in devices)
-			{
-				captureDevice = device;
-				if (ScanningOptions.UseFrontCameraIfAvailable.HasValue &&
-					ScanningOptions.UseFrontCameraIfAvailable.Value &&
-					device.Position == AVCaptureDevicePosition.Front)
+            var devices = AVCaptureDevice.DevicesWithMediaType(AVMediaType.Video).ToList();
 
-					break; //Front camera successfully set
-				else if (device.Position == AVCaptureDevicePosition.Back && (!ScanningOptions.UseFrontCameraIfAvailable.HasValue || !ScanningOptions.UseFrontCameraIfAvailable.Value))
-					break; //Back camera succesfully set
-			}
+            var tryUseBuiltInUltraWideCamera = ScanningOptions.TryUseBuiltInUltraWideCamera.HasValue && ScanningOptions.TryUseBuiltInUltraWideCamera.Value;
+            var useFrontCameraIfAvailable = ScanningOptions.UseFrontCameraIfAvailable.HasValue && ScanningOptions.UseFrontCameraIfAvailable.Value;
+
+
+            captureDevice = devices.FirstOrDefault(x =>
+                (tryUseBuiltInUltraWideCamera ? x.DeviceType == AVCaptureDeviceType.BuiltInUltraWideCamera : true)
+                &&
+                (useFrontCameraIfAvailable ? x.Position == AVCaptureDevicePosition.Front : true)
+            );
+		
 			if (captureDevice == null)
 			{
 				Console.WriteLine("No captureDevice - this won't work on the simulator, try a physical device");

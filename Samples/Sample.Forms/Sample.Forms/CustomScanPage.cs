@@ -20,6 +20,10 @@ namespace Sample.Forms
 				HorizontalOptions = LayoutOptions.FillAndExpand,
 				VerticalOptions = LayoutOptions.FillAndExpand,
 				AutomationId = "zxingScannerView",
+				Options = new ZXing.Mobile.MobileBarcodeScanningOptions()
+                {
+					TryUseBuiltInUltraWideCamera = true
+                }
 			};
 			zxing.OnScanResult += (result) =>
 				Device.BeginInvokeOnMainThread(async () =>
