@@ -118,18 +118,35 @@ namespace ZXing.Mobile
 				SessionPreset = PresetConverter.ToAVCaptureSessionPreset(ScanningOptions.CameraResolutionPreset)
 			};
 
-			// create a device input and attach it to the session
-            var devices = AVCaptureDevice.DevicesWithMediaType(AVMediaType.Video).ToList();
-
-            var tryUseBuiltInUltraWideCamera = ScanningOptions.TryUseBuiltInUltraWideCamera.HasValue && ScanningOptions.TryUseBuiltInUltraWideCamera.Value;
+            var useIphone14Optimization = ScanningOptions.UseIphone14Optimization.HasValue && ScanningOptions.UseIphone14Optimization.Value;
             var useFrontCameraIfAvailable = ScanningOptions.UseFrontCameraIfAvailable.HasValue && ScanningOptions.UseFrontCameraIfAvailable.Value;
 
+            var devices = new List<AVCaptureDevice>();			
 
-            captureDevice = devices.FirstOrDefault(x =>
-                (tryUseBuiltInUltraWideCamera ? x.DeviceType == AVCaptureDeviceType.BuiltInUltraWideCamera : true)
-                &&
-                (useFrontCameraIfAvailable ? x.Position == AVCaptureDevicePosition.Front : true)
-            );
+            var specificDevices = AVCaptureDeviceDiscoverySession.Create(new AVCaptureDeviceType[] {
+                AVCaptureDeviceType.BuiltInWideAngleCamera,
+                AVCaptureDeviceType.BuiltInUltraWideCamera,
+                AVCaptureDeviceType.BuiltInTripleCamera,
+                AVCaptureDeviceType.BuiltInDualWideCamera,
+                AVCaptureDeviceType.BuiltInDuoCamera,
+                AVCaptureDeviceType.BuiltInTelephotoCamera
+            }, AVMediaType.Video, AVCaptureDevicePosition.Back)?.Devices?.ToList() ?? new List<AVCaptureDevice>();
+
+            devices.Add(AVCaptureDevice.GetDefaultDevice(AVMediaTypes.Video));
+            devices.AddRange(specificDevices);
+
+            // create a device input and attach it to the session                     
+
+            captureDevice = null;
+
+            devices = devices.Where(x => x.Position == (useFrontCameraIfAvailable ? AVCaptureDevicePosition.Front : AVCaptureDevicePosition.Back)).ToList();
+
+
+            if (useIphone14Optimization)
+				captureDevice = devices.FirstOrDefault(x => x.DeviceType == AVCaptureDeviceType.BuiltInUltraWideCamera);
+
+			if (captureDevice == null)
+                captureDevice = devices.FirstOrDefault();
 		
 			if (captureDevice == null)
 			{
@@ -142,7 +159,7 @@ namespace ZXing.Mobile
 				return false;
 			}
 
-			CameraResolution resolution = null;
+            CameraResolution resolution = null;
 
 			// Find resolution
 			// Go through the resolutions we can even consider
@@ -294,7 +311,15 @@ namespace ZXing.Mobile
 					captureDeviceOriginalConfig.FocusPointOfInterest = captureDevice.FocusPointOfInterest;
 				if (captureDevice.ExposurePointOfInterestSupported)
 					captureDeviceOriginalConfig.ExposurePointOfInterest = captureDevice.ExposurePointOfInterest;
+				/*
+                float lensPos = 0.05f;
 
+                if (captureDevice.SmoothAutoFocusSupported)
+                    captureDevice.SmoothAutoFocusEnabled = true;
+
+                captureDevice.SetFocusModeLocked(lensPos, (CMTime time) => { Console.WriteLine("focus locked at lens position {0}", lensPos); });
+				*/
+                
 				if (ScanningOptions.DisableAutofocus)
 				{
 					captureDevice.FocusMode = AVCaptureFocusMode.Locked;
@@ -307,7 +332,7 @@ namespace ZXing.Mobile
 						captureDevice.FocusMode = AVCaptureFocusMode.AutoFocus;
 				}
 
-				if (captureDevice.IsExposureModeSupported(AVCaptureExposureMode.ContinuousAutoExposure))
+                if (captureDevice.IsExposureModeSupported(AVCaptureExposureMode.ContinuousAutoExposure))
 					captureDevice.ExposureMode = AVCaptureExposureMode.ContinuousAutoExposure;
 				else if (captureDevice.IsExposureModeSupported(AVCaptureExposureMode.AutoExpose))
 					captureDevice.ExposureMode = AVCaptureExposureMode.AutoExpose;

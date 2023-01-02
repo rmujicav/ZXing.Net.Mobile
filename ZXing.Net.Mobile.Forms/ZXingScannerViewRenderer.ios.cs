@@ -30,7 +30,6 @@ namespace ZXing.Net.Mobile.Forms.iOS
 
 			if (formsView != null && zxingView == null)
 			{
-
 				// Process requests for autofocus
 				formsView.AutoFocusRequested += (x, y) =>
 				{

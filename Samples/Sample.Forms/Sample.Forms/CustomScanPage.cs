@@ -19,11 +19,7 @@ namespace Sample.Forms
 			{
 				HorizontalOptions = LayoutOptions.FillAndExpand,
 				VerticalOptions = LayoutOptions.FillAndExpand,
-				AutomationId = "zxingScannerView",
-				Options = new ZXing.Mobile.MobileBarcodeScanningOptions()
-                {
-					TryUseBuiltInUltraWideCamera = true
-                }
+				AutomationId = "zxingScannerView"
 			};
 			zxing.OnScanResult += (result) =>
 				Device.BeginInvokeOnMainThread(async () =>
@@ -55,14 +51,35 @@ namespace Sample.Forms
 				VerticalOptions = LayoutOptions.FillAndExpand,
 				HorizontalOptions = LayoutOptions.FillAndExpand,
 			};
+
+			var optionsStack = new StackLayout()
+			{
+				HorizontalOptions = LayoutOptions.FillAndExpand
+			};
+
+			var useIphone14OptimizationLabel = new Label() { Text = "Use iPhone 14 optimization", HorizontalOptions = LayoutOptions.FillAndExpand };
+
+			var useIphone14OptimizationSwitch = new Switch();
+
+            useIphone14OptimizationSwitch.Toggled += (object sender, ToggledEventArgs e) =>
+			{
+				zxing.IsScanning = false;
+				zxing.Options.UseIphone14Optimization = e.Value;
+				zxing.IsScanning = true;
+			};
+
+			optionsStack.Children.Add(useIphone14OptimizationLabel);
+			optionsStack.Children.Add(useIphone14OptimizationSwitch);
+
 			grid.Children.Add(zxing);
 			grid.Children.Add(overlay);
+			grid.Children.Add(optionsStack);
 
 			// The root page of your application
 			Content = grid;
 		}
 
-		protected override void OnAppearing()
+        protected override void OnAppearing()
 		{
 			base.OnAppearing();
 
