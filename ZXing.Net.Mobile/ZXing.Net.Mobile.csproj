@@ -4,7 +4,7 @@
 		<TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">$(TargetFrameworks);uap10.0.16299;</TargetFrameworks>
 		<AssemblyName>ZXingNetMobile</AssemblyName>
 		<RootNamespace>ZXing.Net.Mobile</RootNamespace>
-		<PackageId>g0dpain.ZXing.Net.Mobile</PackageId>
+		<PackageId>mariuspck.ZXing.Net.Mobile</PackageId>
 		<PackageIcon>icon.png</PackageIcon>
 		<Summary>ZXing Barcode Scanning for your Xamarin.iOS, Xamarin.Android and Windows Universal apps!</Summary>
 		<PackageTags></PackageTags>
