@@ -103,11 +103,9 @@ namespace ZXing.Mobile
 
 			// create a device input and attach it to the session
 			//			var captureDevice = AVCaptureDevice.DefaultDeviceWithMediaType (AVMediaType.Video);			
-
-            var useIphone14Optimization = ScanningOptions.UseIphone14Optimization.HasValue && ScanningOptions.UseIphone14Optimization.Value;
+			
+            var TryUseUltraWideCamera = ScanningOptions.TryUseUltraWideCamera.HasValue && ScanningOptions.TryUseUltraWideCamera.Value;
             var useFrontCameraIfAvailable = ScanningOptions.UseFrontCameraIfAvailable.HasValue && ScanningOptions.UseFrontCameraIfAvailable.Value;
-
-            var devices = new List<AVCaptureDevice>();
 
             var specificDevices = AVCaptureDeviceDiscoverySession.Create(new AVCaptureDeviceType[] {
                 AVCaptureDeviceType.BuiltInWideAngleCamera,
@@ -118,16 +116,26 @@ namespace ZXing.Mobile
                 AVCaptureDeviceType.BuiltInTelephotoCamera
             }, AVMediaType.Video, AVCaptureDevicePosition.Back)?.Devices?.ToList() ?? new List<AVCaptureDevice>();
 
-            devices.Add(AVCaptureDevice.GetDefaultDevice(AVMediaTypes.Video));
-            devices.AddRange(specificDevices);
+            AVCaptureDevice defaultDevice = null;
+            var defaultDevices = AVCaptureDevice.DevicesWithMediaType(AVMediaType.Video).ToList();
+            if (useFrontCameraIfAvailable)
+                defaultDevice = defaultDevices.FirstOrDefault(x => x.Position == AVCaptureDevicePosition.Front);
+            if (defaultDevice == null)
+                defaultDevice = defaultDevices.FirstOrDefault(x => x.Position == AVCaptureDevicePosition.Back);
 
-            // create a device input and attach it to the session
-			
+
+            var devices = new List<AVCaptureDevice>();
+            devices.AddRange(specificDevices);
+            if (!devices.Contains(defaultDevice))
+                devices = devices.Prepend(defaultDevice).ToList();
+
+            // create a device input and attach it to the session                     
+
             AVCaptureDevice captureDevice = null;
 
             devices = devices.Where(x => x.Position == (useFrontCameraIfAvailable ? AVCaptureDevicePosition.Front : AVCaptureDevicePosition.Back)).ToList();
 
-            if (useIphone14Optimization)
+            if (TryUseUltraWideCamera)
                 captureDevice = devices.FirstOrDefault(x => x.DeviceType == AVCaptureDeviceType.BuiltInUltraWideCamera);
 
             if (captureDevice == null)

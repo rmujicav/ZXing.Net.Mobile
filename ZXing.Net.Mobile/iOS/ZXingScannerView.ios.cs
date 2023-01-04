@@ -118,10 +118,8 @@ namespace ZXing.Mobile
 				SessionPreset = PresetConverter.ToAVCaptureSessionPreset(ScanningOptions.CameraResolutionPreset)
 			};
 
-            var useIphone14Optimization = ScanningOptions.UseIphone14Optimization.HasValue && ScanningOptions.UseIphone14Optimization.Value;
+            var TryUseUltraWideCamera = ScanningOptions.TryUseUltraWideCamera.HasValue && ScanningOptions.TryUseUltraWideCamera.Value;
             var useFrontCameraIfAvailable = ScanningOptions.UseFrontCameraIfAvailable.HasValue && ScanningOptions.UseFrontCameraIfAvailable.Value;
-
-            var devices = new List<AVCaptureDevice>();			
 
             var specificDevices = AVCaptureDeviceDiscoverySession.Create(new AVCaptureDeviceType[] {
                 AVCaptureDeviceType.BuiltInWideAngleCamera,
@@ -132,8 +130,18 @@ namespace ZXing.Mobile
                 AVCaptureDeviceType.BuiltInTelephotoCamera
             }, AVMediaType.Video, AVCaptureDevicePosition.Back)?.Devices?.ToList() ?? new List<AVCaptureDevice>();
 
-            devices.Add(AVCaptureDevice.GetDefaultDevice(AVMediaTypes.Video));
+            AVCaptureDevice defaultDevice = null;
+            var defaultDevices = AVCaptureDevice.DevicesWithMediaType(AVMediaType.Video).ToList();
+            if (useFrontCameraIfAvailable)
+                defaultDevice = defaultDevices.FirstOrDefault(x => x.Position == AVCaptureDevicePosition.Front);
+			if (defaultDevice == null)
+                defaultDevice = defaultDevices.FirstOrDefault(x => x.Position == AVCaptureDevicePosition.Back);
+
+
+			var devices = new List<AVCaptureDevice>();
             devices.AddRange(specificDevices);
+            if (!devices.Contains(defaultDevice))
+                devices = devices.Prepend(defaultDevice).ToList();
 
             // create a device input and attach it to the session                     
 
@@ -141,8 +149,7 @@ namespace ZXing.Mobile
 
             devices = devices.Where(x => x.Position == (useFrontCameraIfAvailable ? AVCaptureDevicePosition.Front : AVCaptureDevicePosition.Back)).ToList();
 
-
-            if (useIphone14Optimization)
+            if (TryUseUltraWideCamera)
 				captureDevice = devices.FirstOrDefault(x => x.DeviceType == AVCaptureDeviceType.BuiltInUltraWideCamera);
 
 			if (captureDevice == null)
@@ -311,16 +318,8 @@ namespace ZXing.Mobile
 					captureDeviceOriginalConfig.FocusPointOfInterest = captureDevice.FocusPointOfInterest;
 				if (captureDevice.ExposurePointOfInterestSupported)
 					captureDeviceOriginalConfig.ExposurePointOfInterest = captureDevice.ExposurePointOfInterest;
-				/*
-                float lensPos = 0.05f;
 
-                if (captureDevice.SmoothAutoFocusSupported)
-                    captureDevice.SmoothAutoFocusEnabled = true;
-
-                captureDevice.SetFocusModeLocked(lensPos, (CMTime time) => { Console.WriteLine("focus locked at lens position {0}", lensPos); });
-				*/
-                
-				if (ScanningOptions.DisableAutofocus)
+                if (ScanningOptions.DisableAutofocus)
 				{
 					captureDevice.FocusMode = AVCaptureFocusMode.Locked;
 				}
@@ -590,17 +589,20 @@ namespace ZXing.Mobile
 			// Revert camera settings to original
 			if (captureDevice != null && captureDevice.LockForConfiguration(out var err))
 			{
-				captureDevice.FocusMode = captureDeviceOriginalConfig.FocusMode;
-				captureDevice.ExposureMode = captureDeviceOriginalConfig.ExposureMode;
-				captureDevice.WhiteBalanceMode = captureDeviceOriginalConfig.WhiteBalanceMode;
-
 				if (UIDevice.CurrentDevice.CheckSystemVersion(7, 0) && captureDevice.AutoFocusRangeRestrictionSupported)
 					captureDevice.AutoFocusRangeRestriction = captureDeviceOriginalConfig.AutoFocusRangeRestriction;
 
-				if (captureDevice.IsFocusModeSupported(captureDeviceOriginalConfig.FocusMode))
+                if (captureDevice.IsExposureModeSupported(captureDeviceOriginalConfig.ExposureMode))
+                    captureDevice.ExposureMode = captureDeviceOriginalConfig.ExposureMode;
+
+				if (captureDevice.IsWhiteBalanceModeSupported(captureDeviceOriginalConfig.WhiteBalanceMode))
+                    captureDevice.WhiteBalanceMode = captureDeviceOriginalConfig.WhiteBalanceMode;
+
+
+                if (captureDevice.IsFocusModeSupported(captureDeviceOriginalConfig.FocusMode))
 					captureDevice.FocusMode = captureDeviceOriginalConfig.FocusMode;
 
-				if (captureDevice.FocusPointOfInterestSupported)
+                if (captureDevice.FocusPointOfInterestSupported)
 					captureDevice.FocusPointOfInterest = captureDeviceOriginalConfig.FocusPointOfInterest;
 
 				if (captureDevice.ExposurePointOfInterestSupported)

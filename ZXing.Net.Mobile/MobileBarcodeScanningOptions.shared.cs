@@ -27,7 +27,7 @@ namespace ZXing.Mobile
 
         public IEnumerable<BarcodeFormat> PossibleFormats { get; set; }
 
-        public bool? UseIphone14Optimization { get; set; }
+        public bool? TryUseUltraWideCamera { get; set; }
 
         public bool? TryHarder { get; set; }
 
