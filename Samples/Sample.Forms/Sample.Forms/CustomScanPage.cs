@@ -57,19 +57,19 @@ namespace Sample.Forms
 				HorizontalOptions = LayoutOptions.FillAndExpand
 			};
 
-			var useIphone14OptimizationLabel = new Label() { Text = "Use iPhone 14 optimization", HorizontalOptions = LayoutOptions.FillAndExpand };
+			var useUltraWideCameraLabel = new Label() { Text = "Use ultrawide camera", HorizontalOptions = LayoutOptions.FillAndExpand };
 
-			var useIphone14OptimizationSwitch = new Switch();
+			var useUltraWideCameraSwitch = new Switch();
 
-            useIphone14OptimizationSwitch.Toggled += (object sender, ToggledEventArgs e) =>
+            useUltraWideCameraSwitch.Toggled += (object sender, ToggledEventArgs e) =>
 			{
 				zxing.IsScanning = false;
-				zxing.Options.UseIphone14Optimization = e.Value;
+				zxing.Options.TryUseUltraWideCamera = e.Value;
 				zxing.IsScanning = true;
 			};
 
-			optionsStack.Children.Add(useIphone14OptimizationLabel);
-			optionsStack.Children.Add(useIphone14OptimizationSwitch);
+			optionsStack.Children.Add(useUltraWideCameraLabel);
+			optionsStack.Children.Add(useUltraWideCameraSwitch);
 
 			grid.Children.Add(zxing);
 			grid.Children.Add(overlay);
