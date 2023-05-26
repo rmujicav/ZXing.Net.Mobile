@@ -685,7 +685,7 @@ namespace ZXing.Mobile
         /// <param name="device"></param>
         /// <param name="minimumCodeSize"></param>
         public static void ApplyAutomaticZoomFactorIfNeeded(AVCaptureDevice device, nfloat minimumCodeSize)
-        {
+        {//please see: https://developer.apple.com/videos/play/wwdc2021/10047/?time=133
             if (UIDevice.CurrentDevice.CheckSystemVersion(15, 0))
             {
                 var deviceMinimumFocusDistance = device.MinimumFocusDistance;
